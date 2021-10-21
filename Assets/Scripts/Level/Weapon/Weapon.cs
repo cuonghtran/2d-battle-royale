@@ -11,6 +11,7 @@ namespace MainGame
         public string weaponName;
         public Rarity rarity = Rarity.Normal;
         [SerializeField] private int ammoCount;
+        public int AmmoCount { get { return ammoCount; } }
         [SerializeField] private int clipSize = 10;
         [Range(1, 10)]
         [SerializeField] private float fireRate = 5;
@@ -67,7 +68,7 @@ namespace MainGame
             // Fire
             AdjustParticleRotation(bulletParticle);
             bulletParticle.Play();
-            //bulletParticle.Emit(1);
+            // bulletParticle.Emit(1);
 
 
             //ray.origin = raycastOrigin.position;

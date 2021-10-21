@@ -18,14 +18,12 @@ namespace MainGame
         [SerializeField] private int activeWeaponIndex = -1;
         public Animator knifeAnimator;
 
-        public UnityEvent OnChangeWeapon, OnPickupWeapon;
-
         private bool onCooldown;
         private string _knifeWeaponName = "Knife";
         private float _knifeCooldown = 0.5f;
         private int _hashKnifeAttack = Animator.StringToHash("Knife_Attack");
 
-        public UnityEvent OnReload;
+        public UnityEvent OnChangeWeapon, OnPickupWeapon, OnReload;
 
         // Start is called before the first frame update
         void Start()
@@ -41,7 +39,7 @@ namespace MainGame
         void Update()
         {
             ChangeWeapon();
-            ReloadActiveWeapon();
+            StartCoroutine(ReloadActiveWeapon());
         }
 
         void ChangeWeapon()
@@ -59,15 +57,16 @@ namespace MainGame
             }
         }
 
-        void ReloadActiveWeapon()
+        IEnumerator ReloadActiveWeapon()
         {
             if (activeWeapon && (Input.GetKeyDown(KeyCode.R) || activeWeapon.CheckOutOfAmmo()))
             {
                 if (activeWeapon.slot != WeaponSlot.Third) // don't reload third weapons
                 {
                     activeWeapon.StopFiring();
-                    StartCoroutine(activeWeapon.Reload());
                     OnReload.Invoke();
+                    yield return StartCoroutine(activeWeapon.Reload());
+                    GUIManager.Instance.UpdateAmmoUI(activeWeapon.AmmoCount);
                 }
             }
         }
@@ -97,7 +96,7 @@ namespace MainGame
                         if (activeWeapon.IsFiring)
                         {
                             activeWeapon.UpdateFiring(Time.deltaTime);
-                            //UIManager.Instance.RefreshAmmoUI(currentWeapon.ammoCount);
+                            GUIManager.Instance.UpdateAmmoUI(activeWeapon.AmmoCount);
                         }
 
                         if (Input.GetMouseButtonUp(0))
@@ -185,7 +184,7 @@ namespace MainGame
                 yield return new WaitForSeconds(0.05f);
                 onCooldown = false;
                 weapon.SetWeaponHolstered(false);
-                // UIManager.Instance.RefreshAmmoUI(weapon.AmmoCount);
+                GUIManager.Instance.UpdateAmmoUI(weapon.AmmoCount);
             }
         }
 

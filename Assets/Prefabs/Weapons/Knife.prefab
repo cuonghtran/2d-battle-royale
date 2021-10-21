@@ -74,7 +74,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1677283775
-  m_SortingLayer: 1
+  m_SortingLayer: 2
   m_SortingOrder: 1
   m_Sprite: {fileID: -3615765672314634783, guid: 818d246a964c747c9ab6409fd3ff24d1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -102,9 +102,8 @@ MonoBehaviour:
   slot: 2
   weaponName: Knife
   rarity: -1
-  muzzleFlashArray: []
   ammoCount: 0
-  clipSize: 10
+  clipSize: 0
   fireRate: 1
   reloadTime: 0.5
   bulletParticle: {fileID: 0}
@@ -194,7 +193,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1677283775
-  m_SortingLayer: 1
+  m_SortingLayer: 2
   m_SortingOrder: 2
   m_Sprite: {fileID: -5433928316579720958, guid: b262c243059484a7081595b35e024a09, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
