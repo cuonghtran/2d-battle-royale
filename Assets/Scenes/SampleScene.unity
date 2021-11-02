@@ -30456,12 +30456,9 @@ PrefabInstance:
       objectReference: {fileID: 1687258584}
     - target: {fileID: 2398855721239482826, guid: 147c1a55ecc134249815e2da7bcf2e9f, type: 3}
       propertyPath: sceneId
-      value: 1597528512
+      value: 1013178958
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 58910073034517200, guid: 147c1a55ecc134249815e2da7bcf2e9f, type: 3}
-    - {fileID: 5388004614728825845, guid: 147c1a55ecc134249815e2da7bcf2e9f, type: 3}
-    - {fileID: 2398855721239482826, guid: 147c1a55ecc134249815e2da7bcf2e9f, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 147c1a55ecc134249815e2da7bcf2e9f, type: 3}
 --- !u!1001 &3511848204691086658
 PrefabInstance:

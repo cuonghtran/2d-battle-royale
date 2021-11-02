@@ -1,25 +1,49 @@
 using UnityEngine;
+using MainGame.InputSystem;
+using Mirror;
 
 namespace MainGame
 {
-    public class PlayerAim : MonoBehaviour
+    public class PlayerAim : NetworkBehaviour
     {
         [SerializeField] private Transform aimTransform;
 
-        private Vector3 mousePosition = Vector3.zero;
         public float aimAngle { get; private set; }
 
-        // Update is called once per frame
-        void Update()
+        private Vector3 _mousePosition = Vector3.zero;
+        private Controls _controls;
+        private Controls _Controls
         {
-            HandleAiming();
-            HandleShooting();
+            get
+            {
+                if (_controls != null) return _controls;
+                return _controls = new Controls();
+            }
         }
 
-        void HandleAiming()
+        public override void OnStartAuthority()
         {
-            mousePosition = UtilsClass.GetMouseWorldPosition(LevelManager.MainCamera);
-            Vector3 aimDirection = (mousePosition - transform.position).normalized;
+            enabled = true;
+
+            _Controls.Player.Aim.performed += ctx => HandleAiming(ctx.ReadValue<Vector2>());
+        }
+
+        [ClientCallback]
+        private void OnEnable()
+        {
+            _Controls.Enable();
+        }
+
+        [ClientCallback]
+        private void OnDisable()
+        {
+            _Controls.Disable();
+        }
+
+        void HandleAiming(Vector2 aimAxis)
+        {
+            _mousePosition = UtilsClass.GetMouseWorldPositionWithZ(aimAxis, LevelManager.MainCamera);
+            Vector3 aimDirection = (_mousePosition - transform.position).normalized;
             aimAngle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
             aimTransform.eulerAngles = new Vector3(0, 0, aimAngle);
 
@@ -30,15 +54,6 @@ namespace MainGame
             else
                 aimLocalScale.y = 1f;
             aimTransform.localScale = aimLocalScale;
-        }
-
-        void HandleShooting()
-        {
-            //if (Input.GetMouseButtonDown(0))
-            //{
-            //    aimAnimator.SetBool("Shoot", true);
-            //}
-            //else aimAnimator.SetBool("Shoot", false);
         }
     }
 }

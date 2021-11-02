@@ -1,14 +1,15 @@
-using UnityEngine;
 using MainGame.Message;
+using UnityEngine;
+using MainGame.InputSystem;
+using Mirror;
 
 namespace MainGame
 {
-    public class PlayerMovement : MonoBehaviour, IMessageReceiver
+    public class PlayerMovement : NetworkBehaviour, IMessageReceiver
     {
         [SerializeField] private float _speed = 5f;
         private Vector2 _movementDirection;
         private float _movementSpeed;
-        private Vector2 _movementInput = Vector2.zero;
 
         private Rigidbody2D _rigidBody;
         private Animator _animator;
@@ -29,15 +30,21 @@ namespace MainGame
         private int _hashVertical = Animator.StringToHash("Vertical");
         private int _hashSpeed = Animator.StringToHash("Speed");
 
-        // Start is called before the first frame update
-        void Awake()
+
+        public override void OnStartAuthority()
         {
+            enabled = true;
+
             _rigidBody = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
             _playerAim = GetComponent<PlayerAim>();
             _renderer = transform.GetComponent<SpriteRenderer>();
+
+            InputManager._Controls.Player.Move.performed += ctx => SetMovement(ctx.ReadValue<Vector2>());
+            InputManager._Controls.Player.Move.canceled += ctx => ResetMovement();
         }
 
+        [ClientCallback]
         private void OnEnable()
         {
             _damageable = GetComponent<Damageable>();
@@ -45,14 +52,14 @@ namespace MainGame
             _damageable.isInvulnerable = true;
         }
 
-        // Update is called once per frame
+        [ClientCallback]
         void Update()
         {
             MovementHandler();
-            RollHandler();
             Animate();
         }
 
+        [ClientCallback]
         void FixedUpdate()
         {
             switch(_moveState)
@@ -68,18 +75,30 @@ namespace MainGame
             
         }
 
+        [Client]
+        private void SetMovement(Vector2 movement)
+        {
+            _movementDirection = movement.normalized;
+        }
+
+        [Client]
+        private void ResetMovement()
+        {
+            _movementDirection = Vector2.zero;
+        }
+
         void MovementHandler()
         {
             if (_externalInputBlocked)
             {
-                //_movementDirection = Vector2.zero;
                 _movementSpeed = 0;
                 return;
             }
+
             switch (_moveState)
             {
                 case MoveState.Normal:
-                    _movementDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+                    //_movementDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
                     _movementSpeed = Mathf.Clamp(_movementDirection.sqrMagnitude, 0f, 1f);
                     _movementDirection.Normalize();
 
@@ -99,36 +118,12 @@ namespace MainGame
                         _moveState = MoveState.Normal;
                     break;
             }
-            
 
-            // TEST DAMAGE
-            //if (Input.GetKeyDown(KeyCode.V))
-            //{
-            //    var d = transform.GetComponent<Damageable>();
-            //    var msg = new Damageable.DamageMessage()
-            //    {
-            //        damager = this,
-            //        amount = 35,
-            //        direction = Vector3.up,
-            //        stopCamera = false
-            //    };
-            //    d.ApplyDamage(msg);
-            //}
-        }
-
-        void RollHandler()
-        {
-            
+            // TEST_DAMAGE();
         }
 
         void Animate()
         {
-            //if (_movementDirection != Vector2.zero)
-            //{
-            //    _anim.SetFloat(_hashHorizontal, _movementDirection.x);
-            //    _anim.SetFloat(_hashVertical, _movementDirection.y);
-            //}
-
             _aimAngle = _playerAim.aimAngle;
             if (-45 < _aimAngle && _aimAngle <= 45) // face right
             {

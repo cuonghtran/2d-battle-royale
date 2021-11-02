@@ -14,6 +14,8 @@ namespace MainGame
         }
         public Transform[] weaponSlots;
         public Weapon[] equippedWeapons = new Weapon[3];
+
+        //[SyncVar(hook = nameof(OnActiveWeaponChanged))]
         [SerializeField] private Weapon activeWeapon;
         [SerializeField] private int activeWeaponIndex = -1;
         public Animator knifeAnimator;
@@ -55,6 +57,12 @@ namespace MainGame
                 if (Input.GetKeyDown(KeyCode.Alpha3))
                     SetActiveWeapon(WeaponSlot.Third, false);
             }
+        }
+
+        void OnActiveWeaponChanged(Weapon _old, Weapon _new)
+        {
+            Equip(activeWeapon, false);
+            OnPickupWeapon.Invoke();
         }
 
         IEnumerator ReloadActiveWeapon()

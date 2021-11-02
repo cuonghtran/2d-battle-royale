@@ -12,14 +12,23 @@ namespace MainGame
         public TMP_Text playerNameText;
 
         private Material _playerMaterialClone;
+        private SceneNetwork _sceneNetwork;
 
         [SyncVar(hook = nameof(OnNameChanged))]
         public string playerName;
         [SyncVar(hook = nameof(OnColorChanged))]
         public Color playerColor = Color.white;
 
+        void Awake()
+        {
+            //allow all players to run this
+            _sceneNetwork = FindObjectOfType<SceneNetwork>();
+        }
+
         public override void OnStartLocalPlayer()
         {
+            _sceneNetwork.playerNetwork = this;
+
             Camera.main.transform.SetParent(transform);
             Camera.main.transform.localPosition = new Vector3(0, 0, -10);
 
@@ -34,6 +43,14 @@ namespace MainGame
             // player info sent to server, then server updates sync vars which handles it on all clients
             playerName = _name;
             playerColor = _col;
+            _sceneNetwork.statusText = $"{playerName} joined.";
+        }
+
+        [Command]
+        public void CmdSendPlayerMessage()
+        {
+            if (_sceneNetwork)
+                _sceneNetwork.statusText = $"{playerName} says hello {Random.Range(10, 99)}";
         }
 
         void OnNameChanged(string _Old, string _New)

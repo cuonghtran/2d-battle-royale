@@ -6,9 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: d1c3109bdb54ad54c8a2b2838528e640
+    path: Assets/Scenes/Lobby.unity
+    guid: 5ba71c2a70c9a4a91b03160c42160469
   - enabled: 1
-    path: Assets/Scenes/Mirror_Networking_Scene.unity
-    guid: 39b44b9cf0aa24d7a8864d9e39ebfed5
+    path: Assets/Scenes/Scene_Level_1.unity
+    guid: e2f047b1cf6ba4fcd9361b8393c16969
+  - enabled: 1
+    path: Assets/Scenes/Scene_Level_2.unity
+    guid: f31fd13fc7765407a8903a91e8cbf25e
   m_configObjects: {}
