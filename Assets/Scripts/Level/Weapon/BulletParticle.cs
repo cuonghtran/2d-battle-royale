@@ -56,6 +56,11 @@ namespace MainGame
 
             for (int i = 0; i < numCollisionEvents; i++)
             {
+                // Collision impulse
+                var rb = other.GetComponent<Rigidbody>();
+                if (rb != null)
+                    rb.AddForceAtPosition(other.transform.position - transform.position * 5, transform.position, ForceMode.Impulse);
+
                 SendDamageMessage(other);
             }
         }
@@ -74,8 +79,7 @@ namespace MainGame
                 stopCamera = false
             };
 
-            d.ApplyDamage(msg);
-            Debug.Log("collide");
+            //d.ApplyDamage(msg);
         }
     }
 }

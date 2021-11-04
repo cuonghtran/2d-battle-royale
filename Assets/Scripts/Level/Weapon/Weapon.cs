@@ -25,7 +25,7 @@ namespace MainGame
         public bool IsHolstered { get; private set; }
         public bool IsFiring { get; private set; }
 
-        [Header("References")]
+        [Header("Particles")]
         public ParticleSystem bulletParticle;
 
         private float accumulatedTime = 0;
@@ -68,30 +68,6 @@ namespace MainGame
             // Fire
             AdjustParticleRotation(bulletParticle);
             bulletParticle.Play();
-            // bulletParticle.Emit(1);
-
-
-            //ray.origin = raycastOrigin.position;
-            //ray.direction = raycastDestination.position - raycastOrigin.position;
-
-            //var tracer = Instantiate(tracerEffect, ray.origin, Quaternion.identity);
-            //tracer.AddPosition(ray.origin);
-
-            //if (Physics.Raycast(ray, out hitInfo))
-            //{
-            //    hitEffect.transform.position = hitInfo.point;
-            //    hitEffect.transform.forward = hitInfo.normal;
-            //    hitEffect.Emit(1);
-
-            //    // Collision impulse
-            //    var rb = hitInfo.collider.GetComponent<Rigidbody>();
-            //    if (rb)
-            //        rb.AddForceAtPosition(ray.direction * 20, hitInfo.point, ForceMode.Impulse);
-
-            //    tracer.transform.position = hitInfo.point;
-            //}
-
-            //recoil.GenerateRecoil(weaponName);
         }
 
         void AdjustParticleRotation(ParticleSystem part)
@@ -140,11 +116,6 @@ namespace MainGame
         public void FillAmmo()
         {
             ammoCount = clipSize;
-        }
-
-        public void SetWeaponHolstered(bool cd)
-        {
-            IsHolstered = cd;
         }
 
         public void ChangeColorByRarity(int targetRarity)

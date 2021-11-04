@@ -4,45 +4,44 @@ using UnityEngine.UI;
 
 namespace MainGame
 {
-    public class HealthAndArmorUI : MonoBehaviour
+    public class HealthWorldUI : MonoBehaviour
     {
         [Header("References")]
+        [SerializeField] private Damageable _damageable;
         [SerializeField] private Image _healthFillImage;
         [SerializeField] private Image _armorFillImage;
         public float updateSpeed = 0.18f;
 
-        // Start is called before the first frame update
-        void Start()
+        private void OnEnable()
         {
-            Reset();
+            _damageable.OnHealthChanged += HandleHealthChanged;
         }
 
-        void Reset()
+        private void OnDisable()
         {
-            _healthFillImage.fillAmount = 1;
-            _armorFillImage.fillAmount = 1;
+            _damageable.OnHealthChanged -= HandleHealthChanged;
         }
 
-        public void ChangeHitPointUI(Damageable damageable)
+        private void HandleHealthChanged(Damageable damageable)
         {
             StartCoroutine(UpdateHpAndArmor(damageable));
         }
 
         IEnumerator UpdateHpAndArmor(Damageable damageable)
         {
-            float armorPercentage = damageable.CurrentArmor / damageable.maxArmor;
             float hpPercentage = damageable.CurrentHitPoints / damageable.maxHitPoints;
+            float armorPercentage = damageable.CurrentArmor / damageable.maxArmor;
 
-            if (armorPercentage > 0)
-                yield return StartCoroutine(UpdateArmorSequence(armorPercentage));
+            yield return StartCoroutine(UpdateArmorSequence(armorPercentage));
             StartCoroutine(UpdateHitPointSequence(hpPercentage));
         }
 
         IEnumerator UpdateArmorSequence(float pct)
         {
             float preChangePct = _armorFillImage.fillAmount;
-            float elapsed = 0;
+            if (preChangePct == pct) yield break;
 
+            float elapsed = 0;
             while (elapsed < updateSpeed)
             {
                 elapsed += Time.deltaTime;
@@ -55,8 +54,9 @@ namespace MainGame
         IEnumerator UpdateHitPointSequence(float pct)
         {
             float preChangePct = _healthFillImage.fillAmount;
-            float elapsed = 0;
+            if (preChangePct == pct) yield break;
 
+            float elapsed = 0;
             while (elapsed < updateSpeed)
             {
                 elapsed += Time.deltaTime;

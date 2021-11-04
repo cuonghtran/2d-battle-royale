@@ -81,7 +81,7 @@ namespace MainGame
                 Weapon newWeapon = Instantiate(weaponToBePickedUp);
                 newWeapon.rarity = this.rarity;
                 newWeapon.FillAmmo();
-                playerWeapons.Equip(newWeapon, true);
+                playerWeapons.Pickup(newWeapon);
                 Destroy(gameObject);
             }
         }

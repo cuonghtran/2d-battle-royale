@@ -118,8 +118,6 @@ namespace MainGame
                         _moveState = MoveState.Normal;
                     break;
             }
-
-            // TEST_DAMAGE();
         }
 
         void Animate()

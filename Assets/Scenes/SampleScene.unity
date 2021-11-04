@@ -30380,7 +30380,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1509703188311443101, guid: 147c1a55ecc134249815e2da7bcf2e9f, type: 3}
       propertyPath: m_Name
-      value: Player
+      value: PlayerAvatar
       objectReference: {fileID: 0}
     - target: {fileID: 1509703188311443101, guid: 147c1a55ecc134249815e2da7bcf2e9f, type: 3}
       propertyPath: m_IsActive
@@ -30457,6 +30457,10 @@ PrefabInstance:
     - target: {fileID: 2398855721239482826, guid: 147c1a55ecc134249815e2da7bcf2e9f, type: 3}
       propertyPath: sceneId
       value: 1013178958
+      objectReference: {fileID: 0}
+    - target: {fileID: 2800825082864873267, guid: 147c1a55ecc134249815e2da7bcf2e9f, type: 3}
+      propertyPath: sceneId
+      value: 4287246427
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 147c1a55ecc134249815e2da7bcf2e9f, type: 3}

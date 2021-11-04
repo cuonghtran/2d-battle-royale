@@ -1,10 +1,11 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using Mirror;
 
 namespace MainGame
 {
-    public class PlayerWeapons : MonoBehaviour
+    public class PlayerWeapons : NetworkBehaviour
     {
         public enum WeaponSlot
         {
@@ -13,11 +14,13 @@ namespace MainGame
             Third = 2
         }
         public Transform[] weaponSlots;
-        public Weapon[] equippedWeapons = new Weapon[3];
 
-        //[SyncVar(hook = nameof(OnActiveWeaponChanged))]
+        public Weapon[] equippedWeapons = new Weapon[3];
         [SerializeField] private Weapon activeWeapon;
+        //[SyncVar(hook = nameof(OnActiveWeaponChanged))]
+        [SyncVar]
         [SerializeField] private int activeWeaponIndex = -1;
+
         public Animator knifeAnimator;
 
         private bool onCooldown;
@@ -27,19 +30,23 @@ namespace MainGame
 
         public UnityEvent OnChangeWeapon, OnPickupWeapon, OnReload;
 
-        // Start is called before the first frame update
-        void Start()
+
+        public override void OnStartAuthority()
         {
-            if (activeWeapon)
-            {
-                Equip(activeWeapon, false);
-                OnPickupWeapon.Invoke();
-            }
+            enabled = true;
+
+            //if (activeWeapon && activeWeaponIndex != -1)
+            //{
+            //    CmdChangeActiveWeapon(activeWeaponIndex);
+            //    OnPickupWeapon.Invoke();
+            //}
         }
 
-        // Update is called once per frame
+        [ClientCallback]
         void Update()
         {
+            //if (!hasAuthority || !isLocalPlayer) return;
+
             ChangeWeapon();
             StartCoroutine(ReloadActiveWeapon());
         }
@@ -49,34 +56,33 @@ namespace MainGame
             if (!activeWeapon.IsReloading)
             {
                 if (Input.GetKeyDown(KeyCode.Alpha1))
-                    SetActiveWeapon(WeaponSlot.First, false);
+                    CmdChangeActiveWeapon((int)WeaponSlot.First);
 
                 if (Input.GetKeyDown(KeyCode.Alpha2))
-                    SetActiveWeapon(WeaponSlot.Second, false);
+                    CmdChangeActiveWeapon((int)WeaponSlot.Second);
 
                 if (Input.GetKeyDown(KeyCode.Alpha3))
-                    SetActiveWeapon(WeaponSlot.Third, false);
+                    CmdChangeActiveWeapon((int)WeaponSlot.Third);
             }
         }
 
-        void OnActiveWeaponChanged(Weapon _old, Weapon _new)
+        void OnActiveWeaponChanged(int oldWeaponIndex, int newWeaponIndex)
         {
-            Equip(activeWeapon, false);
-            OnPickupWeapon.Invoke();
+            RpcChangeWeapon(newWeaponIndex);
         }
 
-        IEnumerator ReloadActiveWeapon()
+        [Command]
+        public void CmdChangeActiveWeapon(int newWeaponIndex)
         {
-            if (activeWeapon && (Input.GetKeyDown(KeyCode.R) || activeWeapon.CheckOutOfAmmo()))
-            {
-                if (activeWeapon.slot != WeaponSlot.Third) // don't reload third weapons
-                {
-                    activeWeapon.StopFiring();
-                    OnReload.Invoke();
-                    yield return StartCoroutine(activeWeapon.Reload());
-                    GUIManager.Instance.UpdateAmmoUI(activeWeapon.AmmoCount);
-                }
-            }
+            activeWeaponIndex = newWeaponIndex;
+            RpcChangeWeapon(newWeaponIndex);
+        }
+
+        [ClientRpc]
+        void RpcChangeWeapon(int newWeaponIndex)
+        {
+            OnChangeWeapon.Invoke();
+            StartCoroutine(SwitchWeapon(newWeaponIndex));
         }
 
         void LateUpdate()
@@ -116,6 +122,20 @@ namespace MainGame
             }
         }
 
+        IEnumerator ReloadActiveWeapon()
+        {
+            if (activeWeapon && (Input.GetKeyDown(KeyCode.R) || activeWeapon.CheckOutOfAmmo()))
+            {
+                if (activeWeapon.slot != WeaponSlot.Third) // don't reload third weapons
+                {
+                    activeWeapon.StopFiring();
+                    OnReload.Invoke();
+                    yield return StartCoroutine(activeWeapon.Reload());
+                    // GUIManager.Instance.UpdateAmmoUI(activeWeapon.AmmoCount);
+                }
+            }
+        }
+
         IEnumerator ReloadKnife()
         {
             onCooldown = true;
@@ -142,44 +162,38 @@ namespace MainGame
             return GetWeaponByIndex(activeWeaponIndex);
         }
 
-        public void Equip(Weapon newWeapon, bool isPickup)
+        public void Pickup(Weapon newWeapon)
         {
-            int weaponSlotIndex = (int)newWeapon.slot;
-            var weapon = GetWeaponByIndex(weaponSlotIndex);
-            if (weapon)
-                return; // do nothing if pickup an already owned weapon
+            int newWeaponIndex = (int)newWeapon.slot;
+            //var weapon = GetWeaponByIndex(newWeaponIndex);
+            //if (weapon)
+            //    return; // do nothing if pickup an already owned weapon
 
-            weapon = newWeapon;
-            weapon.transform.SetParent(weaponSlots[weaponSlotIndex], false);
-            weapon.ChangeColorByRarity((int)newWeapon.rarity);
-            equippedWeapons[weaponSlotIndex] = weapon;
+            //weapon = newWeapon;
+            equippedWeapons[newWeaponIndex] = newWeapon;
+            newWeapon.transform.SetParent(weaponSlots[newWeaponIndex], false);
+            //newWeapon.ChangeColorByRarity((int)newWeapon.rarity);
 
-            SetActiveWeapon(newWeapon.slot, isPickup);
+            CmdChangeActiveWeapon(newWeaponIndex);
+            OnPickupWeapon.Invoke();
         }
 
-        void SetActiveWeapon(WeaponSlot weaponSlot, bool isPickup)
-        {
-            if (equippedWeapons[(int)weaponSlot] == null)
-                return;
-
-            int holsterIndex = activeWeaponIndex;
-            int activateIndex = (int)weaponSlot;
-            if (holsterIndex != activateIndex) // only switch different weapons
-            {
-                StartCoroutine(SwitchWeapon(holsterIndex, activateIndex, isPickup));
-            }
-        }
-
-        IEnumerator HolsterWeapon(int index)
+        IEnumerator HolsterCurrentWeapon()
         {
             onCooldown = true;
-            var weapon = GetWeaponByIndex(index);
-            if (weapon)
+
+            foreach(Weapon wp in equippedWeapons)
             {
-                weapon.SetWeaponHolstered(true);
-                weapon.gameObject.SetActive(false);
-                yield return new WaitForSeconds(0.1f);
+                if (wp != null) wp.gameObject.SetActive(false);
             }
+            yield return new WaitForSeconds(0.1f);
+
+            //var weapon = GetWeaponByIndex(index);
+            //if (weapon)
+            //{
+            //    weapon.gameObject.SetActive(false);
+            //    yield return new WaitForSeconds(0.1f);
+            //}
         }
 
         IEnumerator ActivateWeapon(int index)
@@ -191,19 +205,14 @@ namespace MainGame
                 weapon.gameObject.SetActive(true);
                 yield return new WaitForSeconds(0.05f);
                 onCooldown = false;
-                weapon.SetWeaponHolstered(false);
-                GUIManager.Instance.UpdateAmmoUI(weapon.AmmoCount);
+                //GUIManager.Instance.UpdateAmmoUI(weapon.AmmoCount);
             }
         }
 
-        IEnumerator SwitchWeapon(int currentIndex, int activateIndex, bool isPickup)
+        IEnumerator SwitchWeapon(int newWeaponIndex)
         {
-            yield return StartCoroutine(HolsterWeapon(currentIndex));
-            yield return StartCoroutine(ActivateWeapon(activateIndex));
-            activeWeaponIndex = activateIndex;
-            if (isPickup)
-                OnPickupWeapon.Invoke();
-            else OnChangeWeapon.Invoke();
+            yield return StartCoroutine(HolsterCurrentWeapon());
+            yield return StartCoroutine(ActivateWeapon(newWeaponIndex));
         }
     }
 }
