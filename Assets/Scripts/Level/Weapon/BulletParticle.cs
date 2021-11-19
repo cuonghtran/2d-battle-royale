@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 namespace MainGame
 {
-    public class BulletParticle : MonoBehaviour
+    public class BulletParticle : NetworkBehaviour
     {
         [Header("Bullet Properties")]
         [Range(15, 30)]
@@ -50,6 +51,7 @@ namespace MainGame
             shapePS.angle = spreadAngle;
         }
 
+        [Server]
         void OnParticleCollision(GameObject other)
         {
             int numCollisionEvents = _particleSystem.GetCollisionEvents(other, collisionEvents);
@@ -73,13 +75,13 @@ namespace MainGame
 
             var msg = new Damageable.DamageMessage()
             {
-                damager = this,
+                damager = this.gameObject,
                 amount = damageAmount,
                 direction = other.transform.position - transform.position,
                 stopCamera = false
             };
 
-            //d.ApplyDamage(msg);
+            d.ApplyDamage(msg);
         }
     }
 }

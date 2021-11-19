@@ -20,6 +20,7 @@ namespace MainGame
         public float ReloadTime { get { return reloadTime; } }
         private float damage = 10f;
         public float Damage { get { return damage; } }
+        public float WeaponCooldown { get { return 1f / fireRate; } }
 
         public bool IsReloading { get; private set; }
         public bool IsHolstered { get; private set; }
@@ -41,30 +42,18 @@ namespace MainGame
             transform.GetComponent<SpriteRenderer>().color = CommonClass.RarityColor.ElementAtOrDefault((int)rarity).Value;
         }
 
-        public void StartFiring()
-        {
-            IsFiring = true;
-            accumulatedTime = 0;
-        }
-
-        public void UpdateFiring(float deltaTime)
-        {
-            accumulatedTime += deltaTime;
-            float fireInterval = 1f / fireRate;
-            while (accumulatedTime >= 0f)
-            {
-                FireBullets();
-                accumulatedTime -= fireInterval;
-            }
-        }
-
-        void FireBullets()
+        public void FireBullets()
         {
             // Ammo
             if (ammoCount <= 0)
                 return;
             ammoCount--;
 
+            
+        }
+
+        public void OnFireBullets()
+        {
             // Fire
             AdjustParticleRotation(bulletParticle);
             bulletParticle.Play();
@@ -83,11 +72,6 @@ namespace MainGame
                     mainPS.startRotation = mainPartPS.startRotation;
                 }
             }
-        }
-
-        public void StopFiring()
-        {
-            IsFiring = false;
         }
 
         public bool CheckOutOfAmmo()

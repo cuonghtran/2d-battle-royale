@@ -2,6 +2,7 @@ using MainGame.Message;
 using UnityEngine;
 using MainGame.InputSystem;
 using Mirror;
+using System;
 
 namespace MainGame
 {
@@ -23,18 +24,18 @@ namespace MainGame
         private bool _externalInputBlocked = false;
         private MoveState _moveState = MoveState.Normal;
         private float _rollSpeed;
-        private Vector2 _rollDirection = Vector2.zero;
         private float _rollSpeedDropMultiplier = 5f;
+        private bool _canInteract = false;
 
         private int _hashHorizontal = Animator.StringToHash("Horizontal");
         private int _hashVertical = Animator.StringToHash("Vertical");
         private int _hashSpeed = Animator.StringToHash("Speed");
 
+        public event Action<GameObject> OnPressedInteract;
 
         public override void OnStartAuthority()
         {
             enabled = true;
-
             _rigidBody = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
             _playerAim = GetComponent<PlayerAim>();
@@ -42,6 +43,8 @@ namespace MainGame
 
             InputManager._Controls.Player.Move.performed += ctx => SetMovement(ctx.ReadValue<Vector2>());
             InputManager._Controls.Player.Move.canceled += ctx => ResetMovement();
+            InputManager._Controls.Player.Roll.performed += ctx => Roll();
+            InputManager._Controls.Player.Interact.performed += ctx => Interact();
         }
 
         [ClientCallback]
@@ -98,17 +101,8 @@ namespace MainGame
             switch (_moveState)
             {
                 case MoveState.Normal:
-                    //_movementDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
                     _movementSpeed = Mathf.Clamp(_movementDirection.sqrMagnitude, 0f, 1f);
                     _movementDirection.Normalize();
-
-                    if (Input.GetKeyDown(KeyCode.LeftShift))
-                    {
-                        _rollDirection = _movementDirection;
-                        _rollSpeed = _speed * 6; // starting value of roll speed
-                        _moveState = MoveState.Rolling;
-                    }
-
                     break;
 
                 case MoveState.Rolling:
@@ -118,6 +112,26 @@ namespace MainGame
                         _moveState = MoveState.Normal;
                     break;
             }
+        }
+
+        void Roll()
+        {
+            if (_moveState == MoveState.Normal)
+            {
+
+                _rollSpeed = _speed * 6; // starting value of roll speed
+                _moveState = MoveState.Rolling;
+            }
+        }
+
+        void Interact()
+        {
+            OnPressedInteract?.Invoke(gameObject);
+        }
+
+        public void SetInteraction(bool canInteract)
+        {
+            _canInteract = canInteract;
         }
 
         void Animate()

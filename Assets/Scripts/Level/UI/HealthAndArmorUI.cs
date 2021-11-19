@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,38 +12,26 @@ namespace MainGame
         [SerializeField] private Image _armorFillImage;
         public float updateSpeed = 0.18f;
 
-        // Start is called before the first frame update
-        void Start()
-        {
-            Reset();
-        }
-
-        void Reset()
-        {
-            _healthFillImage.fillAmount = 1;
-            _armorFillImage.fillAmount = 1;
-        }
-
-        public void ChangeHitPointUI(Damageable damageable)
+        public void HandleHealthChanged(Damageable damageable)
         {
             StartCoroutine(UpdateHpAndArmor(damageable));
         }
 
         IEnumerator UpdateHpAndArmor(Damageable damageable)
         {
-            float armorPercentage = damageable.CurrentArmor / damageable.maxArmor;
             float hpPercentage = damageable.CurrentHitPoints / damageable.maxHitPoints;
+            float armorPercentage = damageable.CurrentArmor / damageable.maxArmor;
 
-            if (armorPercentage > 0)
-                yield return StartCoroutine(UpdateArmorSequence(armorPercentage));
+            yield return StartCoroutine(UpdateArmorSequence(armorPercentage));
             StartCoroutine(UpdateHitPointSequence(hpPercentage));
         }
 
         IEnumerator UpdateArmorSequence(float pct)
         {
             float preChangePct = _armorFillImage.fillAmount;
-            float elapsed = 0;
+            if (preChangePct == pct) yield break;
 
+            float elapsed = 0;
             while (elapsed < updateSpeed)
             {
                 elapsed += Time.deltaTime;
@@ -55,8 +44,9 @@ namespace MainGame
         IEnumerator UpdateHitPointSequence(float pct)
         {
             float preChangePct = _healthFillImage.fillAmount;
-            float elapsed = 0;
+            if (preChangePct == pct) yield break;
 
+            float elapsed = 0;
             while (elapsed < updateSpeed)
             {
                 elapsed += Time.deltaTime;

@@ -24,6 +24,7 @@ namespace MainGame
         [SerializeField] private NetworkGamePlayer _gamePlayerPrefab;
         [SerializeField] private GameObject _playerSpawnSystem;
         [SerializeField] private GameObject _roundSystem;
+        [SerializeField] private GameObject _weaponSpawner;
 
         private MapHandler _mapHandler;
 
@@ -34,12 +35,14 @@ namespace MainGame
 
         public List<NetworkRoomPlayer> RoomPlayers { get; } = new List<NetworkRoomPlayer>();
         public List<NetworkGamePlayer> GamePlayers { get; } = new List<NetworkGamePlayer>();
+        public static Dictionary<int, PlayerData> ClientData;
 
         #region Lobby
 
         public override void OnStartServer()
         {
             spawnPrefabs = Resources.LoadAll<GameObject>("NetworkedPrefabs").ToList();
+            ClientData = new Dictionary<int, PlayerData>();
         }
 
         public override void OnStartClient()
@@ -61,7 +64,7 @@ namespace MainGame
         public override void OnClientDisconnect(NetworkConnection conn)
         {
             base.OnClientDisconnect(conn);
-
+            
             OnClientDisconnected?.Invoke();
         }
 
@@ -97,6 +100,7 @@ namespace MainGame
             {
                 var player = conn.identity.GetComponent<NetworkRoomPlayer>();
                 RoomPlayers.Remove(player);
+                ClientData.Remove(conn.connectionId);
                 NotifyPlayersOfReadyState();
             }
 
@@ -159,7 +163,7 @@ namespace MainGame
                     var conn = RoomPlayers[i].connectionToClient;
                     var gamePlayerInstance = Instantiate(_gamePlayerPrefab);
                     gamePlayerInstance.SetDisplayName(RoomPlayers[i].DisplayName);
-
+                    ClientData[conn.connectionId] = new PlayerData(RoomPlayers[i].DisplayName);
                     NetworkServer.Destroy(conn.identity.gameObject);
                     NetworkServer.ReplacePlayerForConnection(conn, gamePlayerInstance.gameObject, true);
                 }
@@ -184,14 +188,29 @@ namespace MainGame
 
                 GameObject roundSystemInstance = Instantiate(_roundSystem);
                 NetworkServer.Spawn(roundSystemInstance);
+
+                GameObject weaponSpawnerInstance = Instantiate(_weaponSpawner);
+                NetworkServer.Spawn(weaponSpawnerInstance);
+
+                foreach (var data in ClientData)
+                {
+                    Debug.Log("Key: " + data.Key + ", Value: " + data.Value.PlayerName);
+                }
             }
         }
 
         public override void OnServerReady(NetworkConnection conn)
         {
             base.OnServerReady(conn);
-
             OnServerReadied?.Invoke(conn);
+        }
+
+        public static PlayerData? GetPlayerData(int connectionId)
+        {
+            if (ClientData.TryGetValue(connectionId, out PlayerData playerData))
+                return playerData;
+
+            return null;
         }
 
         #endregion

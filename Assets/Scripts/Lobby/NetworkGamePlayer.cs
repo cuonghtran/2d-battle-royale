@@ -34,7 +34,12 @@ namespace MainGame
         [Server]
         public void SetDisplayName(string displayName)
         {
-            this._displayName = displayName;
+            _displayName = displayName;
+        }
+
+        public string GetPlayerName()
+        {
+            return _displayName;
         }
     }
 }

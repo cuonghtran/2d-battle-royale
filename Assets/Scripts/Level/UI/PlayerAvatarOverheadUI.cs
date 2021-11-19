@@ -1,24 +1,32 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using Mirror;
 
 namespace MainGame
 {
-    public class HealthWorldUI : MonoBehaviour
+    public class PlayerAvatarOverheadUI : MonoBehaviour
     {
+        [Header("Data")]
+        [SerializeField] private ClientPlayerAvatarRuntimeCollection _playerAvatars;
+
         [Header("References")]
         [SerializeField] private Damageable _damageable;
         [SerializeField] private Image _healthFillImage;
         [SerializeField] private Image _armorFillImage;
         public float updateSpeed = 0.18f;
+        [SerializeField] private TMP_Text _playerName_Text;
 
         private void OnEnable()
         {
+            _playerAvatars.ItemAdded += PlayerAvatarAdded;
             _damageable.OnHealthChanged += HandleHealthChanged;
         }
 
         private void OnDisable()
         {
+            _playerAvatars.ItemAdded -= PlayerAvatarAdded;
             _damageable.OnHealthChanged -= HandleHealthChanged;
         }
 
@@ -64,6 +72,23 @@ namespace MainGame
                 yield return null;
             }
             _healthFillImage.fillAmount = pct;
+        }
+
+        private void PlayerAvatarAdded(ClientPlayerAvatar clientPlayerAvatar)
+        {
+            if (clientPlayerAvatar.hasAuthority)
+            {
+                // Set display name
+                //_playerName_Text.text = GetPlayerName(connectionToClient.connectionId);
+            }
+        }
+
+        private string GetPlayerName(int connectionId)
+        {
+            var playerData = MainGameNetworkManager.GetPlayerData(connectionId);
+            if (playerData.HasValue)
+                return playerData.Value.PlayerName;
+            return "Anonymous";
         }
     }
 }

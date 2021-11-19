@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Natu
+  m_text: Name
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9727bd9afd9fe4648a96db6802523f43, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 2a44a6f60fd2b4123b6a2edf27c39c7a, type: 2}
@@ -395,6 +395,8 @@ GameObject:
   - component: {fileID: 6620826845254367569}
   - component: {fileID: 931905880859603636}
   - component: {fileID: 5026285396454175107}
+  - component: {fileID: -4406721321125127788}
+  - component: {fileID: -5341723951431713024}
   m_Layer: 9
   m_Name: PlayerAvatar
   m_TagString: Player
@@ -506,7 +508,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.25003707}
+  m_Offset: {x: 0, y: -0.061964393}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -517,7 +519,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.74893343, y: 0.49992585}
+  m_Size: {x: 0.74893343, y: 0.8760712}
   m_EdgeRadius: 0
 --- !u!95 &1509703188311443110
 Animator:
@@ -575,7 +577,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1509703188311443101}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3301226d5cdff487a96d6c4ccb455ba2, type: 3}
   m_Name: 
@@ -689,21 +691,6 @@ MonoBehaviour:
   OnBecomeVulnerable:
     m_PersistentCalls:
       m_Calls: []
-  OnResetDamage:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainGame.HealthAndArmorUI, Assembly-CSharp
-        m_MethodName: ChangeHitPointUI
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 1509703188311443114}
-          m_ObjectArgumentAssemblyTypeName: MainGame.Damageable, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
   onDamageMessageReceivers: []
 --- !u!114 &7505300377820597931
 MonoBehaviour:
@@ -812,6 +799,43 @@ MonoBehaviour:
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
   target: {fileID: 1509703188618743823}
+--- !u!114 &-4406721321125127788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1509703188311443101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c416f0b42e0dd4c9b811090ed3ffa909, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  _playerAvatars: {fileID: 11400000, guid: bfa76259946f7412888fe3ae893f4c48, type: 2}
+--- !u!114 &-5341723951431713024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1509703188311443101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab2cbc52526ea384ba280d13cd1a57b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  target: {fileID: 1509703188311443105}
+  clientAuthority: 0
+  syncVelocity: 1
+  clearVelocity: 0
+  velocitySensitivity: 0.1
+  syncAngularVelocity: 1
+  clearAngularVelocity: 0
+  angularVelocitySensitivity: 0.1
 --- !u!1 &1509703188529926732
 GameObject:
   m_ObjectHideFlags: 0
@@ -1205,10 +1229,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 744a825e3426341f386d1f4e227f125b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerAvatars: {fileID: 11400000, guid: bfa76259946f7412888fe3ae893f4c48, type: 2}
   _damageable: {fileID: 1509703188311443114}
   _healthFillImage: {fileID: 7999986641906170576}
   _armorFillImage: {fileID: 1505106268866272347}
   updateSpeed: 0.18
+  _playerName_Text: {fileID: 82220400}
 --- !u!1 &4505426659944035458
 GameObject:
   m_ObjectHideFlags: 0

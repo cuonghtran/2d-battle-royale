@@ -9820,7 +9820,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -0.68}
+  m_AnchoredPosition: {x: 0.12, y: -0.68}
   m_SizeDelta: {x: 1.4885, y: 0.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8347943849096976498
@@ -9948,6 +9948,7 @@ GameObject:
   - component: {fileID: 8347943849321350261}
   - component: {fileID: 8347943849321350260}
   - component: {fileID: 8347943849321350259}
+  - component: {fileID: 8438599380798465276}
   m_Layer: 0
   m_Name: Rifle_Pickup
   m_TagString: Untagged
@@ -9984,6 +9985,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1de188962ca214f07b939a8b8cc3eb27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   weaponToBePickedUp: {fileID: 3475423720639091621, guid: ce279fb5845d54d8fafae171acaa07df, type: 3}
   weaponTransform: {fileID: 8347943850475586845}
   rarity: 0
@@ -10004,6 +10007,23 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.56
+--- !u!114 &8438599380798465276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8347943849321350262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  serverOnly: 0
+  visible: 0
+  m_AssetId: 1d5430c83c5f1428ba73df7b7822ff9d
+  hasSpawned: 0
 --- !u!1 &8347943849763985945
 GameObject:
   m_ObjectHideFlags: 0

@@ -2116,13 +2116,14 @@ MonoBehaviour:
   playerSpawnMethod: 0
   spawnPrefabs: []
   _menuScene: Assets/Scenes/Lobby.unity
-  _minPlayers: 2
+  _minPlayers: 1
   _numberOfRounds: 1
   _mapSet: {fileID: 11400000, guid: 33efae262fd7c40fea129f49f7b7e432, type: 2}
   _roomPlayerPrefab: {fileID: 1161278856999507101, guid: 63e7c293b6f694c65968a60bb6477498, type: 3}
   _gamePlayerPrefab: {fileID: 5801164708718218923, guid: 156cc78a282dc49c2a35078228fee2aa, type: 3}
   _playerSpawnSystem: {fileID: 1458620939225592572, guid: 739e9dba65b0f4ea081cfc3a628501d5, type: 3}
   _roundSystem: {fileID: 6645880686453507054, guid: dd757ade5aa9440ec8ff36b815f72d6c, type: 3}
+  _weaponSpawner: {fileID: 7268250716968284465, guid: 7a650b896d7a34e189429e94aaf6245d, type: 3}
 --- !u!1 &1384907302
 GameObject:
   m_ObjectHideFlags: 0

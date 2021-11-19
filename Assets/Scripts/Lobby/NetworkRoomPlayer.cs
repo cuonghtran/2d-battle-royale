@@ -57,6 +57,9 @@ namespace MainGame
         public override void OnStartClient()
         {
             _Room.RoomPlayers.Add(this);
+            //_connectionId = connectionToClient != null
+            //                        ? connectionToClient.connectionId
+            //                        : connectionToServer.connectionId;
             UpdateDisplay();
         }
 

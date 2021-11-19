@@ -150,16 +150,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 246285479}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
+  m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
+  m_MoveRepeatDelay: 0.5
+  m_MoveRepeatRate: 0.1
+  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_PointAction: {fileID: 1054132383583890850, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_MoveAction: {fileID: 3710738434707379630, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_SubmitAction: {fileID: 2064916234097673511, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_CancelAction: {fileID: -1967631576421560919, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_LeftClickAction: {fileID: 8056856818456041789, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_MiddleClickAction: {fileID: 3279352641294131588, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_RightClickAction: {fileID: 3837173908680883260, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_ScrollWheelAction: {fileID: 4502412055082496612, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_TrackedDevicePositionAction: {fileID: 4754684134866288074, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_TrackedDeviceOrientationAction: {fileID: 1025543830046995696, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_DeselectOnBackgroundClick: 1
+  m_PointerBehavior: 0
 --- !u!114 &246285481
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30722,6 +30730,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2566709124158280779, guid: aab28a9a8aa50499485defb7ee2f7604, type: 3}
+      propertyPath: sceneId
+      value: 2359706972
+      objectReference: {fileID: 0}
     - target: {fileID: 5065936664268592169, guid: aab28a9a8aa50499485defb7ee2f7604, type: 3}
       propertyPath: m_Name
       value: Shotgun_Pickup
@@ -30974,6 +30986,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 615198487345566825, guid: af26eae8a15d24f9e96b87d1ae782e56, type: 3}
+      propertyPath: sceneId
+      value: 1428678299
+      objectReference: {fileID: 0}
     - target: {fileID: 7420646526709526171, guid: af26eae8a15d24f9e96b87d1ae782e56, type: 3}
       propertyPath: m_Camera
       value: 
@@ -31039,6 +31055,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3071050828808635404, guid: 9d89fd15700b34dfc8f4a90aef647801, type: 3}
+      propertyPath: sceneId
+      value: 865095646
+      objectReference: {fileID: 0}
     - target: {fileID: 7635676147152076372, guid: 9d89fd15700b34dfc8f4a90aef647801, type: 3}
       propertyPath: m_Camera
       value: 
@@ -31229,5 +31249,9 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1687258584}
+    - target: {fileID: 8438599380798465276, guid: 1d5430c83c5f1428ba73df7b7822ff9d, type: 3}
+      propertyPath: sceneId
+      value: 153123329
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d5430c83c5f1428ba73df7b7822ff9d, type: 3}

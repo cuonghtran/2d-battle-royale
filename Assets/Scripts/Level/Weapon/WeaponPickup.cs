@@ -1,10 +1,12 @@
 using System.Collections;
 using UnityEngine;
 using System.Linq;
+using Mirror;
+using System;
 
 namespace MainGame
 {
-    public class WeaponPickup : MonoBehaviour
+    public class WeaponPickup : NetworkBehaviour
     {
         [Header("References")]
         [SerializeField] private Weapon weaponToBePickedUp;
@@ -14,7 +16,6 @@ namespace MainGame
 
         private bool isTriggered = false;
         private bool isLooted = false;
-        private Transform triggerTransform;
         private Vector3 topPosition;
         private Vector3 bottomPosition;
         private float floatSpeed = 0.09f;
@@ -28,7 +29,6 @@ namespace MainGame
             bottomPosition = weaponTransform.position - new Vector3(0, 0.07f, 0);
         }
 
-        // Update is called once per frame
         void Update()
         {
             // make the weapon transform floating
@@ -46,15 +46,14 @@ namespace MainGame
                     StartCoroutine(SwitchDirection());
             }
 
-            // a player in the trigger zone
-            if (isTriggered && !isLooted)
-            {
-                if (Input.GetKey(KeyCode.E))
-                {
-                    isLooted = true;
-                    PickUpWeapon(triggerTransform);
-                }
-            }
+            //if (isTriggered && !isLooted)
+            //{
+            //    if (Input.GetKey(KeyCode.E))
+            //    {
+            //        isLooted = true;
+            //        CmdPickUpWeapon();
+            //    }
+            //}
         }
 
         IEnumerator SwitchDirection()
@@ -63,37 +62,59 @@ namespace MainGame
             goingForward = !goingForward;
         }
 
+        [ServerCallback]
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (collision.CompareTag("Player"))
+            if (collision.gameObject.CompareTag("Player"))
             {
-                InteractCanvas.SetActive(true);
-                isTriggered = true;
-                triggerTransform = collision.transform;
+                var conn = collision.gameObject.GetComponent<NetworkIdentity>().connectionToClient;
+                TargetInteractUI(conn, collision.gameObject, true);
             }
         }
-
-        private void PickUpWeapon(Transform collision)
-        {
-            PlayerWeapons playerWeapons = collision.GetComponent<PlayerWeapons>();
-            if (playerWeapons)
-            {
-                Weapon newWeapon = Instantiate(weaponToBePickedUp);
-                newWeapon.rarity = this.rarity;
-                newWeapon.FillAmmo();
-                playerWeapons.Pickup(newWeapon);
-                Destroy(gameObject);
-            }
-        }
-
+        [ServerCallback]
         private void OnTriggerExit2D(Collider2D collision)
         {
-            if (collision.CompareTag("Player"))
+            if (collision.gameObject.CompareTag("Player"))
             {
-                InteractCanvas.SetActive(false);
-                isTriggered = false;
-                triggerTransform = null;
+                var conn = collision.gameObject.GetComponent<NetworkIdentity>().connectionToClient;
+                TargetInteractUI(conn, collision.gameObject, false);
             }
+        }
+
+        [TargetRpc]
+        private void TargetInteractUI(NetworkConnection target, GameObject targetPlayer, bool isOn)
+        {
+            InteractCanvas.SetActive(isOn);
+            isTriggered = isOn;
+            if (isOn)
+                targetPlayer.GetComponent<PlayerMovement>().OnPressedInteract += PlayerInteractionHandler;
+            else targetPlayer.GetComponent<PlayerMovement>().OnPressedInteract -= PlayerInteractionHandler;
+        }
+
+        private void PlayerInteractionHandler(GameObject interactPlayer)
+        {
+            if (isTriggered && !isLooted)
+            {
+                PlayerWeapons playerWeapons = interactPlayer.GetComponent<PlayerWeapons>();
+                CmdPickUpWeapon(playerWeapons, interactPlayer);
+            }
+        }
+
+        [Command(requiresAuthority = false)]
+        private void CmdPickUpWeapon(PlayerWeapons playerWeapons, GameObject interactPlayer)
+        {
+            isLooted = true;
+            RpcPickUp(interactPlayer.transform, playerWeapons);
+        }
+
+        [ClientRpc]
+        private void RpcPickUp(Transform targetTransform, PlayerWeapons playerWeapons)
+        {
+            Weapon newWeapon = Instantiate(weaponToBePickedUp, targetTransform);
+            newWeapon.rarity = this.rarity;
+            newWeapon.FillAmmo();
+            playerWeapons.PostPickUpHandler(newWeapon);
+            NetworkServer.Destroy(gameObject);
         }
 
 #if UNITY_EDITOR

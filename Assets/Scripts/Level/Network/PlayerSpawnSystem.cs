@@ -51,9 +51,9 @@ namespace MainGame
             }
 
             GameObject playerInstance = Instantiate(_playerPrefab, _SpawnPoints[_nextIndex].position, _SpawnPoints[_nextIndex].rotation);
+
             //spawn the player on the other objects. Conn is included to send authority.
             NetworkServer.Spawn(playerInstance, conn);
-            // NetworkServer.AddPlayerForConnection(conn, playerInstance);
 
             _nextIndex++;
         }
