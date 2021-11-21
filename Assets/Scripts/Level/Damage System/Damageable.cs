@@ -17,8 +17,6 @@ namespace MainGame
             public float amount;
             public Vector3 direction;
             public float knockBackForce;
-
-            public bool stopCamera;
         }
 
         public float maxHitPoints;
@@ -33,6 +31,7 @@ namespace MainGame
 
         public float invulnerabilityTime = 0f;
         public bool isInvulnerable;
+        public GameObject damagePopupPrefab;
 
         public UnityEvent OnDeath, OnReceiveDamage, OnBecomeVulnerable;
         public Action<Damageable> OnHealthChanged;
@@ -41,14 +40,16 @@ namespace MainGame
         public List<MonoBehaviour> onDamageMessageReceivers;
 
         protected float _timeSinceLastHit = 0.0f;
-        protected Collider _collider;
+        private Collider _collider;
+        private SpriteRenderer _sRenderer;
 
         #region Server
 
-        public override void OnStartServer()
+        public override void OnStartClient()
         {
-            ResetDamage();
-            OnHealthChanged?.Invoke(this);
+            _collider = GetComponent<Collider>();
+            _sRenderer = GetComponent<SpriteRenderer>();
+            ResetDamageable();
         }
 
         [Server]
@@ -61,14 +62,9 @@ namespace MainGame
 
         #region Client
 
-        public override void OnStartAuthority()
-        {
-            _collider = GetComponent<Collider>();
-        }
-
         private void Update()
         {
-            if (!hasAuthority) return;
+            // if (!hasAuthority) return;
 
             //    if (isInvulnerable)
             //    {
@@ -94,7 +90,7 @@ namespace MainGame
 
         #endregion
 
-        private void ResetDamage()
+        private void ResetDamageable()
         {
             _currentHitPoints = maxHitPoints;
             _currentArmor = maxArmor;
@@ -107,11 +103,10 @@ namespace MainGame
             _collider.enabled = enabled;
         }
 
-        [Server]
         public void ApplyDamage(DamageMessage dmgMessage)
         {
             StartCoroutine(SetDamage(dmgMessage));
-            //CmdDealDamage(dmgMessage);
+            TargetShowDamagePopupText(dmgMessage.amount);
 
             //// already dead or invulnerable
             //if (_currentHitPoints <= 0 || isInvulnerable)
@@ -147,6 +142,16 @@ namespace MainGame
             }
 
             yield return null;
+        }
+
+        [TargetRpc]
+        void TargetShowDamagePopupText(float dmg)
+        {
+            var topMostPos = transform.GetComponent<SpriteRenderer>().bounds.size.y / 2;
+            Vector3 dmgPos = new Vector3(transform.position.x, transform.position.y + topMostPos, transform.position.z);
+
+            var dmgText = Instantiate(damagePopupPrefab, dmgPos, Quaternion.identity);
+            dmgText.GetComponent<DamagePopup>().SetUp(dmg, true);
         }
     }
 }

@@ -42,14 +42,12 @@ namespace MainGame
             transform.GetComponent<SpriteRenderer>().color = CommonClass.RarityColor.ElementAtOrDefault((int)rarity).Value;
         }
 
-        public void FireBullets()
+        public void ReduceAmmo()
         {
             // Ammo
             if (ammoCount <= 0)
                 return;
             ammoCount--;
-
-            
         }
 
         public void OnFireBullets()
@@ -89,7 +87,6 @@ namespace MainGame
             float elapsedTime = 0;
             while (elapsedTime <= reloadTime)
             {
-                // TODO UI reload
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }

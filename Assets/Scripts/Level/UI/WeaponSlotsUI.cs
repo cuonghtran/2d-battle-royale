@@ -4,10 +4,25 @@ namespace MainGame
 {
     public class WeaponSlotsUI : MonoBehaviour
     {
-        float originPosY = 0;
-        float posYChange = 25;
+        float _transitionTime = 0.15f;
+        float _activateAlpha = 0.85f;
+        float _deactivateAlpha = 0.6f;
+        float _originPosY = 0;
+        float _posYChange = 25;
 
         private Weapon[] equippedWeapons = new Weapon[3];
+
+        private void OnEnable()
+        {
+            PlayerWeapons.OnWeaponChanged += UpdateActiveSlotUI;
+            PlayerWeapons.OnWeaponPickedUp += UpdateActiveSlotWhenPickupUI;
+        }
+
+        private void OnDisable()
+        {
+            PlayerWeapons.OnWeaponChanged -= UpdateActiveSlotUI;
+            PlayerWeapons.OnWeaponPickedUp -= UpdateActiveSlotWhenPickupUI;
+        }
 
         public void UpdateActiveSlotUI(PlayerWeapons playerWeapons)
         {
@@ -16,8 +31,8 @@ namespace MainGame
             foreach (RectTransform rect in transform)
             {
                 if (rect.GetSiblingIndex() == activeSlot)
-                    LeanTween.moveY(rect, posYChange, 0.25f).setOnComplete(() => rect.GetComponent<CanvasGroup>().alpha = 0.9f);
-                else LeanTween.moveY(rect, originPosY, 0.25f).setOnComplete(() => rect.GetComponent<CanvasGroup>().alpha = 0.65f);
+                    MoveSlot(rect, _posYChange, _transitionTime, _activateAlpha);
+                else MoveSlot(rect, _originPosY, _transitionTime, _deactivateAlpha);
             }
         }
 
@@ -37,10 +52,15 @@ namespace MainGame
                 }
 
                 if (wpIndex == activeSlot)
-                    LeanTween.moveY(rect, posYChange, 0.25f).setOnComplete(() => rect.GetComponent<CanvasGroup>().alpha = 0.9f);
-                else LeanTween.moveY(rect, originPosY, 0.25f).setOnComplete(() => rect.GetComponent<CanvasGroup>().alpha = 0.65f);
+                    MoveSlot(rect, _posYChange, _transitionTime, _activateAlpha);
+                else MoveSlot(rect, _originPosY, _transitionTime, _deactivateAlpha);
             }
 
+        }
+
+        private void MoveSlot(RectTransform rect, float yPositionChange, float transitionTime, float alphaValue)
+        {
+            LeanTween.moveY(rect, yPositionChange, transitionTime).setOnComplete(() => rect.GetComponent<CanvasGroup>().alpha = alphaValue);
         }
     }
 }

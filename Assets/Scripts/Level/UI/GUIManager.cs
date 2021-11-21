@@ -20,7 +20,7 @@ namespace MainGame
         [SerializeField] private Image _armorFillImage;
         public float updateSpeed = 0.18f;
         [SerializeField] private TMP_Text _playerName_Text;
-        [SerializeField] private TMP_Text _bigAmmoMag_Text;
+        [SerializeField] private TMP_Text _ammoMag_Text;
 
         private Damageable _clientDamageable;
 
@@ -35,9 +35,16 @@ namespace MainGame
             _playerAvatars.ItemRemoved += PlayerAvatarRemoved;
         }
 
-        private void Start()
+        private void OnEnable()
         {
-            
+            PlayerWeapons.OnAmmoChanged += UpdateAmmoUI;
+        }
+
+        private void OnDisable()
+        {
+            _playerAvatars.ItemAdded -= PlayerAvatarAdded;
+            _playerAvatars.ItemRemoved -= PlayerAvatarRemoved;
+            PlayerWeapons.OnAmmoChanged -= UpdateAmmoUI;
         }
 
         private void PlayerAvatarAdded(ClientPlayerAvatar clientPlayerAvatar)
@@ -49,7 +56,7 @@ namespace MainGame
 
                 Assert.IsTrue(damageableExists,
                 "Damageable component not found on ClientPlayerAvatar");
-
+                
                 // _playerName_Text.text = GetPlayerName(netIdentity.connectionToClient.connectionId);
 
                 _clientDamageable = localDamageable;
@@ -61,12 +68,6 @@ namespace MainGame
         private void PlayerAvatarRemoved(ClientPlayerAvatar clientPlayerAvatar)
         {
             _clientDamageable.OnHealthChanged -= HandleHealthChanged;
-        }
-
-        private void OnDestroy()
-        {
-            _playerAvatars.ItemAdded -= PlayerAvatarAdded;
-            _playerAvatars.ItemRemoved -= PlayerAvatarRemoved;
         }
 
         private string GetPlayerName(int connectionId)
@@ -83,7 +84,7 @@ namespace MainGame
 
         public void UpdateAmmoUI(int ammo)
         {
-            _bigAmmoMag_Text.text = ammo.ToString();
+            _ammoMag_Text.text = ammo.ToString();
         }
 
         #endregion

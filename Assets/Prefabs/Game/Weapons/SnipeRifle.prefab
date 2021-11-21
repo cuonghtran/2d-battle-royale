@@ -9973,7 +9973,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   speed: 21
-  lifeTime: 1.1
+  lifeTime: 0.95
   size: 0.3
   spreadAngle: 0.65
   damageAmount: 40

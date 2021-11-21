@@ -9867,7 +9867,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   speed: 17
-  lifeTime: 1
+  lifeTime: 0.85
   size: 0.23
   spreadAngle: 1.75
   damageAmount: 10

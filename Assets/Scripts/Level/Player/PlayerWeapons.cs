@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
@@ -30,17 +31,25 @@ namespace MainGame
         private int _hashKnifeAttack = Animator.StringToHash("Knife_Attack");
         private Weapon weaponToBePickedUp = null;
 
-        public UnityEvent OnChangeWeapon, OnReload;
+        public UnityEvent OnReload;
+        public static Action<int> OnAmmoChanged;
+        public static Action<PlayerWeapons> OnWeaponChanged, OnWeaponPickedUp;
 
 
-        //public override void OnStartAuthority()
-        //{
-        //    enabled = true;
-        //}
+        public override void OnStartAuthority()
+        {
+            enabled = true;
 
-        
+            if (activeWeapon)
+            {
+                OnWeaponPickedUp.Invoke(this);
+            }
+        }
+
         void Update()
         {
+            if (!isLocalPlayer) return;
+
             ChangeWeapon();
             StartCoroutine(ReloadActiveWeapon());
             WeaponFireHandler();
@@ -51,32 +60,20 @@ namespace MainGame
             if (!activeWeapon.IsReloading)
             {
                 if (Input.GetKeyDown(KeyCode.Alpha1))
+                {
                     CmdChangeActiveWeapon((int)WeaponSlot.First);
+                }
 
                 if (Input.GetKeyDown(KeyCode.Alpha2))
+                {
                     CmdChangeActiveWeapon((int)WeaponSlot.Second);
+                }
 
                 if (Input.GetKeyDown(KeyCode.Alpha3))
+                {
                     CmdChangeActiveWeapon((int)WeaponSlot.Third);
+                }
             }
-        }
-
-        [Command]
-        public void CmdChangeActiveWeapon(int newWeaponIndex)
-        {
-            if (activeWeaponIndex == newWeaponIndex || equippedWeapons[newWeaponIndex] == null)
-                return;
-
-            activeWeaponIndex = newWeaponIndex;
-            _weaponCooldownTime = 0;
-            RpcChangeWeapon(newWeaponIndex);
-        }
-
-        [ClientRpc]
-        private void RpcChangeWeapon(int newWeaponIndex)
-        {
-            OnChangeWeapon.Invoke();
-            StartCoroutine(SwitchWeapon(newWeaponIndex));
         }
 
         private void WeaponFireHandler()
@@ -94,6 +91,8 @@ namespace MainGame
                         if (Time.time >= _weaponCooldownTime)
                         {
                             _weaponCooldownTime = Time.time + activeWeapon.WeaponCooldown;
+                            activeWeapon.ReduceAmmo();
+                            UpdateAmmoUI();
                             CmdShoot();
                         }
                     }
@@ -117,7 +116,6 @@ namespace MainGame
         [Command]
         private void CmdShoot()
         {
-            activeWeapon.FireBullets();
             RpcOnShoot();
         }
 
@@ -135,7 +133,7 @@ namespace MainGame
                 {
                     OnReload.Invoke();
                     yield return StartCoroutine(activeWeapon.Reload());
-                    // GUIManager.Instance.UpdateAmmoUI(activeWeapon.AmmoCount);
+                    UpdateAmmoUI();
                 }
             }
         }
@@ -154,6 +152,27 @@ namespace MainGame
             _onCooldown = false;
         }
 
+        [Client]
+        void UpdateAmmoUI()
+        {
+            if (!isLocalPlayer) return;
+            OnAmmoChanged?.Invoke(activeWeapon.AmmoCount);
+        }
+
+        [Client]
+        void UpdateWeaponSlotUIWhenChange()
+        {
+            if (!isLocalPlayer) return;
+            OnWeaponChanged.Invoke(this);
+        }
+
+        [Client]
+        void UpdateWeaponSlotUIWhenPickUp()
+        {
+            if (!isLocalPlayer) return;
+            OnWeaponPickedUp.Invoke(this);
+        }
+
         Weapon GetWeaponByIndex(int index)
         {
             if (index < 0 || index >= equippedWeapons.Length)
@@ -166,14 +185,48 @@ namespace MainGame
             return GetWeaponByIndex(activeWeaponIndex);
         }
 
+        [Command]
+        public void CmdChangeActiveWeapon(int newWeaponIndex)
+        {
+            if (activeWeaponIndex == newWeaponIndex || equippedWeapons[newWeaponIndex] == null)
+                return;
+
+            activeWeaponIndex = newWeaponIndex;
+            _weaponCooldownTime = 0;
+            RpcChangeWeapon(newWeaponIndex);
+        }
+
+        [ClientRpc]
+        private void RpcChangeWeapon(int newWeaponIndex)
+        {
+            StartCoroutine(SwitchWeapon(newWeaponIndex));
+        }
+
+        [Command]
+        public void CmdActivatePickedUpWeapon(int newWeaponIndex)
+        {
+            if (activeWeaponIndex == newWeaponIndex || equippedWeapons[newWeaponIndex] == null)
+                return;
+
+            activeWeaponIndex = newWeaponIndex;
+            _weaponCooldownTime = 0;
+            RpcActivatePickedUpWeapon(newWeaponIndex);
+        }
+
+        [ClientRpc]
+        private void RpcActivatePickedUpWeapon(int newWeaponIndex)
+        {
+            StartCoroutine(SwitchWeapon(newWeaponIndex, true));
+        }
+
+        [Client]
         public void PostPickUpHandler(Weapon newWeapon)
         {
             int newWeaponIndex = (int)newWeapon.slot;
             equippedWeapons[newWeaponIndex] = newWeapon;
             newWeapon.transform.SetParent(weaponSlots[newWeaponIndex], false);
 
-            CmdChangeActiveWeapon(newWeaponIndex);
-            //OnPickupWeapon.Invoke();
+            CmdActivatePickedUpWeapon(newWeaponIndex);
         }
 
         IEnumerator HolsterCurrentWeapon()
@@ -187,23 +240,28 @@ namespace MainGame
             yield return new WaitForSeconds(0.1f);
         }
 
-        IEnumerator ActivateWeapon(int index)
+        IEnumerator ActivateWeapon(int index, bool fromPickUp)
         {
             var weapon = GetWeaponByIndex(index);
             if (weapon)
             {
                 activeWeapon = weapon;
                 weapon.gameObject.SetActive(true);
+                // update weapons UI
+                if (fromPickUp)
+                    UpdateWeaponSlotUIWhenPickUp();
+                else UpdateWeaponSlotUIWhenChange();
+
                 yield return new WaitForSeconds(0.05f);
+                UpdateAmmoUI();
                 _onCooldown = false;
-                //GUIManager.Instance.UpdateAmmoUI(weapon.AmmoCount);
             }
         }
 
-        IEnumerator SwitchWeapon(int newWeaponIndex)
+        IEnumerator SwitchWeapon(int newWeaponIndex, bool fromPickUp = false)
         {
             yield return StartCoroutine(HolsterCurrentWeapon());
-            yield return StartCoroutine(ActivateWeapon(newWeaponIndex));
+            yield return StartCoroutine(ActivateWeapon(newWeaponIndex, fromPickUp));
         }
     }
 }

@@ -78,7 +78,6 @@ namespace MainGame
                 damager = this.gameObject,
                 amount = damageAmount,
                 direction = other.transform.position - transform.position,
-                stopCamera = false
             };
 
             d.ApplyDamage(msg);

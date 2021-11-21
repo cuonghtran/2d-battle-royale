@@ -54,7 +54,7 @@ namespace MainGame
 
             //spawn the player on the other objects. Conn is included to send authority.
             NetworkServer.Spawn(playerInstance, conn);
-
+            NetworkServer.ReplacePlayerForConnection(conn, playerInstance.gameObject, true);
             _nextIndex++;
         }
     }

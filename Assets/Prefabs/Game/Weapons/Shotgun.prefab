@@ -9976,7 +9976,7 @@ MonoBehaviour:
   lifeTime: 0.5
   size: 0.18
   spreadAngle: 23
-  damageAmount: 5
+  damageAmount: 6
   isBurstWeapon: 1
   bulletForWeapon: {fileID: 0}
 --- !u!198 &5981926842328197814

@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &82220402
 RectTransform:
   m_ObjectHideFlags: 0
@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 1.0272}
+  m_AnchoredPosition: {x: 0, y: 0.944}
   m_SizeDelta: {x: 1.9508, y: 0.3456}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &82220401
@@ -508,7 +508,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.061964393}
+  m_Offset: {x: 0, y: -0.03259778}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -519,7 +519,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.74893343, y: 0.8760712}
+  m_Size: {x: 0.6321173, y: 0.817338}
   m_EdgeRadius: 0
 --- !u!95 &1509703188311443110
 Animator:
@@ -577,7 +577,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1509703188311443101}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3301226d5cdff487a96d6c4ccb455ba2, type: 3}
   m_Name: 
@@ -601,21 +601,6 @@ MonoBehaviour:
       - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MainGame.WeaponSlotsUI, Assembly-CSharp
         m_MethodName: UpdateActiveSlotUI
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 1509703188311443109}
-          m_ObjectArgumentAssemblyTypeName: MainGame.PlayerWeapons, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  OnPickupWeapon:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainGame.WeaponSlotsUI, Assembly-CSharp
-        m_MethodName: UpdateActiveSlotWhenPickupUI
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 1509703188311443109}
@@ -658,6 +643,7 @@ MonoBehaviour:
   maxArmor: 50
   invulnerabilityTime: 2
   isInvulnerable: 0
+  damagePopupPrefab: {fileID: 6477372396473653176, guid: a1e0a961c5a984c67bd45444fc02ab19, type: 3}
   OnDeath:
     m_PersistentCalls:
       m_Calls:
@@ -1357,8 +1343,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.8}
-  m_SizeDelta: {x: 0.9146, y: 0.1088}
+  m_AnchoredPosition: {x: 0, y: 0.71680003}
+  m_SizeDelta: {x: 0.957, y: 0.1088}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3805234181928341402
 CanvasRenderer:
@@ -1578,8 +1564,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.69119996}
-  m_SizeDelta: {x: 0.9146, y: 0.1088}
+  m_AnchoredPosition: {x: 0, y: 0.608}
+  m_SizeDelta: {x: 0.957, y: 0.1088}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4311939099840279773
 CanvasRenderer:
