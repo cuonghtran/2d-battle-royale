@@ -24,7 +24,7 @@ namespace MainGame
         private bool _externalInputBlocked = false;
         private MoveState _moveState = MoveState.Normal;
         private float _rollSpeed;
-        private float _rollSpeedDropMultiplier = 5f;
+        private float _rollSpeedDropMultiplier = 4f;
         private bool _canInteract = false;
 
         private int _hashHorizontal = Animator.StringToHash("Horizontal");
@@ -51,8 +51,7 @@ namespace MainGame
         private void OnEnable()
         {
             _damageable = GetComponent<Damageable>();
-            _damageable.onDamageMessageReceivers.Add(this);
-            _damageable.isInvulnerable = true;
+            //_damageable.isInvulnerable = true;
         }
 
         [ClientCallback]
@@ -107,9 +106,12 @@ namespace MainGame
 
                 case MoveState.Rolling:
                     _rollSpeed -= _rollSpeed * _rollSpeedDropMultiplier * Time.deltaTime;
-                    float rollSpeedMinimum = 50f;
+                    float rollSpeedMinimum = 200f;
                     if (_rollSpeed < rollSpeedMinimum)
+                    {
+                        _animator.SetBool("IsRolling", false);
                         _moveState = MoveState.Normal;
+                    }
                     break;
             }
         }
@@ -119,7 +121,8 @@ namespace MainGame
             if (_moveState == MoveState.Normal)
             {
 
-                _rollSpeed = _speed * 6; // starting value of roll speed
+                _rollSpeed = _speed * 5.8f; // starting value of roll speed
+                _animator.SetBool("IsRolling", true);
                 _moveState = MoveState.Rolling;
             }
         }

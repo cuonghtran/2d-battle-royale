@@ -23,13 +23,15 @@ namespace MainGame
         [SerializeField] private int activeWeaponIndex = -1;
 
         public Animator knifeAnimator;
+        private PlayerNetwork _playerNetwork;
 
         private bool _onCooldown;
         private string _knifeWeaponName = "Knife";
         private float _weaponCooldownTime = 0f;
-        private float _knifeCooldown = 0.5f;
+        private float _knifeCooldown = 0.7f;
         private int _hashKnifeAttack = Animator.StringToHash("Knife_Attack");
-        private Weapon weaponToBePickedUp = null;
+        private string _playerOwner;
+        public Weapon weaponToBePickedUp;
 
         public UnityEvent OnReload;
         public static Action<int> OnAmmoChanged;
@@ -39,9 +41,11 @@ namespace MainGame
         public override void OnStartAuthority()
         {
             enabled = true;
+            _playerOwner = NetworkGamePlayer.singleton.GetDisplayName();
 
             if (activeWeapon)
             {
+                activeWeapon.playerOwner = _playerOwner;
                 OnWeaponPickedUp.Invoke(this);
             }
         }
@@ -225,6 +229,8 @@ namespace MainGame
             int newWeaponIndex = (int)newWeapon.slot;
             equippedWeapons[newWeaponIndex] = newWeapon;
             newWeapon.transform.SetParent(weaponSlots[newWeaponIndex], false);
+            newWeapon.playerOwner = _playerOwner;
+            newWeapon.SetUpOwner();
 
             CmdActivatePickedUpWeapon(newWeaponIndex);
         }

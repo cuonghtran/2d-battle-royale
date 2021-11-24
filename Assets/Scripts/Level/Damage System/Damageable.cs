@@ -14,6 +14,7 @@ namespace MainGame
         public struct DamageMessage
         {
             public GameObject damager;
+            public string sourcePlayer;
             public float amount;
             public Vector3 direction;
             public float knockBackForce;
@@ -36,9 +37,6 @@ namespace MainGame
         public UnityEvent OnDeath, OnReceiveDamage, OnBecomeVulnerable;
         public Action<Damageable> OnHealthChanged;
 
-        [Tooltip("When this gameObject is damaged, these other gameObjects are notified.")]
-        public List<MonoBehaviour> onDamageMessageReceivers;
-
         protected float _timeSinceLastHit = 0.0f;
         private Collider _collider;
         private SpriteRenderer _sRenderer;
@@ -49,6 +47,10 @@ namespace MainGame
         {
             _collider = GetComponent<Collider>();
             _sRenderer = GetComponent<SpriteRenderer>();
+        }
+
+        private void OnEnable()
+        {
             ResetDamageable();
         }
 
@@ -62,8 +64,8 @@ namespace MainGame
 
         #region Client
 
-        private void Update()
-        {
+        //private void Update()
+        //{
             // if (!hasAuthority) return;
 
             //    if (isInvulnerable)
@@ -76,7 +78,7 @@ namespace MainGame
             //            OnBecomeVulnerable.Invoke();
             //        }
             //    }
-        }
+        //}
 
         private void OnHitPointsChanged(float oldValue, float newValue)
         {
@@ -105,26 +107,17 @@ namespace MainGame
 
         public void ApplyDamage(DamageMessage dmgMessage)
         {
+            // already dead or invulnerable
+            if (_currentHitPoints <= 0 || isInvulnerable) return;
+
             StartCoroutine(SetDamage(dmgMessage));
             TargetShowDamagePopupText(dmgMessage.amount);
 
-            //// already dead or invulnerable
-            //if (_currentHitPoints <= 0 || isInvulnerable)
-            //    return;
-
-            //// isInvulnerable = true;  // enable this line if want to make player invul after getting hit.
-            //CalculateDamageDone(dmgMessage.amount);
-
             //if (_currentHitPoints <= 0)
-            //    schedule += OnDeath.Invoke;
-            //else OnReceiveDamage.Invoke();
-
-            //var messageType = _currentHitPoints <= 0 ? MessageType.DEAD : MessageType.DAMAGED;
-
-            //for (var i = 0; i < onDamageMessageReceivers.Count; ++i)
             //{
-            //    var receiver = onDamageMessageReceivers[i] as IMessageReceiver;
-            //    receiver.OnReceiveMessage(messageType, this, dmgMessage);
+            //    isInvulnerable = true;
+            //    CmdUpdatePlayerPoint(dmgMessage.sourcePlayer);
+            //    CmdRespawn();
             //}
         }
 
@@ -152,6 +145,19 @@ namespace MainGame
 
             var dmgText = Instantiate(damagePopupPrefab, dmgPos, Quaternion.identity);
             dmgText.GetComponent<DamagePopup>().SetUp(dmg, true);
+        }
+
+        [Command]
+        private void CmdUpdatePlayerPoint(string sourcePlayer)
+        {
+            NetworkGamePlayer.singleton.UpdatePlayerPoints(sourcePlayer);
+        }
+
+        [Command]
+        private void CmdRespawn()
+        {
+            var playerNetwork = GetComponent<PlayerNetwork>();
+            LevelManager.singleton.ServerRespawn(playerNetwork);
         }
     }
 }

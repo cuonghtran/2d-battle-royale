@@ -51,12 +51,13 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   speed: 16
-  lifeTime: 0.8
+  lifeTime: 0.7
   size: 0.25
   spreadAngle: 1.25
-  damageAmount: 18
+  damageAmount: 14
   isBurstWeapon: 0
   bulletForWeapon: {fileID: 0}
+  playerOwner: 
 --- !u!198 &1325109969701760493
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -5017,6 +5018,7 @@ MonoBehaviour:
   clipSize: 12
   fireRate: 2.5
   reloadTime: 0.6
+  playerOwner: 
   bulletParticle: {fileID: 1325109969701760493}
 --- !u!1 &2470237137478711974
 GameObject:

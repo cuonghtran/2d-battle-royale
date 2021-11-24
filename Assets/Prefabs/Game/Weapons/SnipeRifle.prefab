@@ -5055,6 +5055,7 @@ MonoBehaviour:
   clipSize: 10
   fireRate: 1.25
   reloadTime: 1.25
+  playerOwner: 
   bulletParticle: {fileID: 7639574128006971985}
 --- !u!1 &7413817516950974727
 GameObject:
@@ -9976,9 +9977,10 @@ MonoBehaviour:
   lifeTime: 0.95
   size: 0.3
   spreadAngle: 0.65
-  damageAmount: 40
+  damageAmount: 36
   isBurstWeapon: 0
   bulletForWeapon: {fileID: 0}
+  playerOwner: 
 --- !u!198 &7639574128006971985
 ParticleSystem:
   m_ObjectHideFlags: 0

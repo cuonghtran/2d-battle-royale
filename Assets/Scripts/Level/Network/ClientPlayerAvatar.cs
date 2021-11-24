@@ -9,6 +9,8 @@ namespace MainGame
         [SerializeField]
         ClientPlayerAvatarRuntimeCollection _playerAvatars;
 
+        public int connId;
+
         public override void OnStartAuthority()
         {
             name = "PlayerAvatar" + netId;

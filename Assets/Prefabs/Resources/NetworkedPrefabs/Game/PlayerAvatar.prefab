@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &82220402
 RectTransform:
   m_ObjectHideFlags: 0
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Name
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9727bd9afd9fe4648a96db6802523f43, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 2a44a6f60fd2b4123b6a2edf27c39c7a, type: 2}
@@ -391,11 +391,12 @@ GameObject:
   - component: {fileID: 1509703188311443109}
   - component: {fileID: 1509703188311443114}
   - component: {fileID: 7505300377820597931}
+  - component: {fileID: -4406721321125127788}
+  - component: {fileID: 1788993017006783709}
   - component: {fileID: 2800825082864873267}
   - component: {fileID: 6620826845254367569}
   - component: {fileID: 931905880859603636}
   - component: {fileID: 5026285396454175107}
-  - component: {fileID: -4406721321125127788}
   - component: {fileID: -5341723951431713024}
   m_Layer: 9
   m_Name: PlayerAvatar
@@ -595,21 +596,7 @@ MonoBehaviour:
   activeWeapon: {fileID: 5163233885769435315}
   activeWeaponIndex: 2
   knifeAnimator: {fileID: 1509703188300531065}
-  OnChangeWeapon:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainGame.WeaponSlotsUI, Assembly-CSharp
-        m_MethodName: UpdateActiveSlotUI
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 1509703188311443109}
-          m_ObjectArgumentAssemblyTypeName: MainGame.PlayerWeapons, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  weaponToBePickedUp: {fileID: 0}
   OnReload:
     m_PersistentCalls:
       m_Calls:
@@ -677,7 +664,6 @@ MonoBehaviour:
   OnBecomeVulnerable:
     m_PersistentCalls:
       m_Calls: []
-  onDamageMessageReceivers: []
 --- !u!114 &7505300377820597931
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -693,6 +679,37 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   _virtualCamera: {fileID: 1388025769414792319}
+--- !u!114 &-4406721321125127788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1509703188311443101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c416f0b42e0dd4c9b811090ed3ffa909, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  _playerAvatars: {fileID: 11400000, guid: bfa76259946f7412888fe3ae893f4c48, type: 2}
+  connId: 0
+--- !u!114 &1788993017006783709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1509703188311443101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9395f63bdb2d04ff7a964c09e50381c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  playerName: 
 --- !u!114 &2800825082864873267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -785,21 +802,6 @@ MonoBehaviour:
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
   target: {fileID: 1509703188618743823}
---- !u!114 &-4406721321125127788
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1509703188311443101}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c416f0b42e0dd4c9b811090ed3ffa909, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  _playerAvatars: {fileID: 11400000, guid: bfa76259946f7412888fe3ae893f4c48, type: 2}
 --- !u!114 &-5341723951431713024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1216,10 +1218,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerAvatars: {fileID: 11400000, guid: bfa76259946f7412888fe3ae893f4c48, type: 2}
+  updateSpeed: 0.18
+  _playerNetwork: {fileID: 1788993017006783709}
   _damageable: {fileID: 1509703188311443114}
   _healthFillImage: {fileID: 7999986641906170576}
   _armorFillImage: {fileID: 1505106268866272347}
-  updateSpeed: 0.18
   _playerName_Text: {fileID: 82220400}
 --- !u!1 &4505426659944035458
 GameObject:

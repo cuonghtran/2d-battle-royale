@@ -1,28 +1,48 @@
 using UnityEngine;
+using Mirror;
 
 namespace MainGame
 {
-    public class KnifeHit : MonoBehaviour
+    public class KnifeHit : NetworkBehaviour
     {
-        [SerializeField] private Weapon _representWeapon;
         [SerializeField] LayerMask attacksWhat;
+        private Weapon _knifeWeapon;
+        private Damageable _ownerDamageable;
+        private string _playerOwner;
+        private float _damageAmount = 25f;
 
+        private void Start()
+        {
+            _knifeWeapon = transform.GetComponentInParent<Weapon>();
+            _ownerDamageable = transform.GetComponentInParent<Damageable>();
+
+            _playerOwner = _knifeWeapon.playerOwner;
+        }
+
+        [Server]
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            //var d = collision.GetComponent<Damageable>();
-            //if (d == null)
-            //    return;
+            var dmg = collision.GetComponent<Damageable>();
+            if (dmg == null || _ownerDamageable == dmg)
+                return;
+            SendDamageMessage(collision.gameObject);
+        }
 
-            //var msg = new Damageable.DamageMessage()
-            //{
-            //    damager = this,
-            //    amount = _representWeapon.Damage,
-            //    direction = collision.transform.position - transform.position,
-            //    stopCamera = false
-            //};
+        void SendDamageMessage(GameObject other)
+        {
+            var d = other.GetComponent<Damageable>();
+            if (d == null)
+                return;
 
-            //d.ApplyDamage(msg);
-            //Debug.Log("collide");
+            var msg = new Damageable.DamageMessage()
+            {
+                damager = this.gameObject,
+                sourcePlayer = _playerOwner,
+                amount = _damageAmount,
+                direction = other.transform.position - transform.position,
+            };
+
+            d.ApplyDamage(msg);
         }
     }
 }

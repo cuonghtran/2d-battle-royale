@@ -21,6 +21,7 @@ namespace MainGame
         private float damage = 10f;
         public float Damage { get { return damage; } }
         public float WeaponCooldown { get { return 1f / fireRate; } }
+        [HideInInspector] public string playerOwner;
 
         public bool IsReloading { get; private set; }
         public bool IsHolstered { get; private set; }
@@ -40,6 +41,12 @@ namespace MainGame
         private void OnEnable()
         {
             transform.GetComponent<SpriteRenderer>().color = CommonClass.RarityColor.ElementAtOrDefault((int)rarity).Value;
+        }
+
+        public void SetUpOwner()
+        {
+            if (bulletParticle != null)
+                bulletParticle.GetComponent<BulletParticle>().playerOwner = playerOwner;
         }
 
         public void ReduceAmmo()

@@ -35,14 +35,13 @@ namespace MainGame
 
         public List<NetworkRoomPlayer> RoomPlayers { get; } = new List<NetworkRoomPlayer>();
         public List<NetworkGamePlayer> GamePlayers { get; } = new List<NetworkGamePlayer>();
-        public static Dictionary<int, PlayerData> ClientData;
+        public Dictionary<string, int> PlayerPoints = new Dictionary<string, int>();
 
         #region Lobby
 
         public override void OnStartServer()
         {
             spawnPrefabs = Resources.LoadAll<GameObject>("NetworkedPrefabs").ToList();
-            ClientData = new Dictionary<int, PlayerData>();
         }
 
         public override void OnStartClient()
@@ -100,7 +99,6 @@ namespace MainGame
             {
                 var player = conn.identity.GetComponent<NetworkRoomPlayer>();
                 RoomPlayers.Remove(player);
-                ClientData.Remove(conn.connectionId);
                 NotifyPlayersOfReadyState();
             }
 
@@ -163,7 +161,6 @@ namespace MainGame
                     var conn = RoomPlayers[i].connectionToClient;
                     var gamePlayerInstance = Instantiate(_gamePlayerPrefab);
                     gamePlayerInstance.SetDisplayName(RoomPlayers[i].DisplayName);
-                    ClientData[conn.connectionId] = new PlayerData(RoomPlayers[i].DisplayName);
                     NetworkServer.Destroy(conn.identity.gameObject);
                     NetworkServer.ReplacePlayerForConnection(conn, gamePlayerInstance.gameObject, true);
                 }
@@ -191,11 +188,6 @@ namespace MainGame
 
                 GameObject weaponSpawnerInstance = Instantiate(_weaponSpawner);
                 NetworkServer.Spawn(weaponSpawnerInstance);
-
-                foreach (var data in ClientData)
-                {
-                    Debug.Log("Key: " + data.Key + ", Value: " + data.Value.PlayerName);
-                }
             }
         }
 
@@ -205,12 +197,10 @@ namespace MainGame
             OnServerReadied?.Invoke(conn);
         }
 
-        public static PlayerData? GetPlayerData(int connectionId)
+        public void Respawn(NetworkConnection conn)
         {
-            if (ClientData.TryGetValue(connectionId, out PlayerData playerData))
-                return playerData;
-
-            return null;
+            var spawner = _playerSpawnSystem.GetComponent<PlayerSpawnSystem>();
+            spawner.SpawnPlayer(conn);
         }
 
         #endregion

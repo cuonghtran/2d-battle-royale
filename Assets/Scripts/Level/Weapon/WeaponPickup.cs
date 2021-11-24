@@ -96,6 +96,8 @@ namespace MainGame
             if (isTriggered && !isLooted)
             {
                 PlayerWeapons playerWeapons = interactPlayer.GetComponent<PlayerWeapons>();
+                isLooted = true;
+                playerWeapons.weaponToBePickedUp = weaponToBePickedUp;
                 CmdPickUpWeapon(playerWeapons, interactPlayer);
             }
         }

@@ -38,6 +38,7 @@ namespace MainGame
         private void OnEnable()
         {
             PlayerWeapons.OnAmmoChanged += UpdateAmmoUI;
+            _playerName_Text.text = NetworkGamePlayer.singleton.GetDisplayName();
         }
 
         private void OnDisable()
@@ -62,20 +63,11 @@ namespace MainGame
                 _clientDamageable = localDamageable;
                 _clientDamageable.OnHealthChanged += HandleHealthChanged;
             }
-            else Debug.Log("no auth");
         }
 
         private void PlayerAvatarRemoved(ClientPlayerAvatar clientPlayerAvatar)
         {
             _clientDamageable.OnHealthChanged -= HandleHealthChanged;
-        }
-
-        private string GetPlayerName(int connectionId)
-        {
-            var playerData = MainGameNetworkManager.GetPlayerData(connectionId);
-            if (playerData.HasValue)
-                return playerData.Value.PlayerName;
-            return "Anonymous";
         }
 
         #endregion

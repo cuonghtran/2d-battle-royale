@@ -9867,12 +9867,13 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   speed: 17
-  lifeTime: 0.85
+  lifeTime: 0.8
   size: 0.23
   spreadAngle: 1.75
-  damageAmount: 10
+  damageAmount: 8
   isBurstWeapon: 0
   bulletForWeapon: {fileID: 0}
+  playerOwner: 
 --- !u!198 &4427444988556312437
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -14833,4 +14834,5 @@ MonoBehaviour:
   clipSize: 30
   fireRate: 8
   reloadTime: 0.9
+  playerOwner: 
   bulletParticle: {fileID: 4427444988556312437}

@@ -20,8 +20,8 @@ namespace MainGame
         [SerializeField] private float damageAmount = 5f;
 
         [SerializeField] private bool isBurstWeapon;
-
         [SerializeField] Weapon bulletForWeapon;
+        [HideInInspector] public string playerOwner;
 
         private ParticleSystem _particleSystem;
         private List<ParticleCollisionEvent> collisionEvents;
@@ -76,6 +76,7 @@ namespace MainGame
             var msg = new Damageable.DamageMessage()
             {
                 damager = this.gameObject,
+                sourcePlayer = playerOwner,
                 amount = damageAmount,
                 direction = other.transform.position - transform.position,
             };

@@ -12,16 +12,20 @@ namespace MainGame
         [SerializeField] private ClientPlayerAvatarRuntimeCollection _playerAvatars;
 
         [Header("References")]
+        public float updateSpeed = 0.18f;
+        [SerializeField] private PlayerNetwork _playerNetwork;
         [SerializeField] private Damageable _damageable;
         [SerializeField] private Image _healthFillImage;
         [SerializeField] private Image _armorFillImage;
-        public float updateSpeed = 0.18f;
         [SerializeField] private TMP_Text _playerName_Text;
+
 
         private void OnEnable()
         {
             _playerAvatars.ItemAdded += PlayerAvatarAdded;
             _damageable.OnHealthChanged += HandleHealthChanged;
+
+            _playerName_Text.text = NetworkGamePlayer.singleton.GetDisplayName();
         }
 
         private void OnDisable()
@@ -81,14 +85,6 @@ namespace MainGame
                 // Set display name
                 //_playerName_Text.text = GetPlayerName(connectionToClient.connectionId);
             }
-        }
-
-        private string GetPlayerName(int connectionId)
-        {
-            var playerData = MainGameNetworkManager.GetPlayerData(connectionId);
-            if (playerData.HasValue)
-                return playerData.Value.PlayerName;
-            return "Anonymous";
         }
     }
 }

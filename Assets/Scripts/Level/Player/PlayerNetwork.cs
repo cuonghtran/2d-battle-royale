@@ -8,6 +8,16 @@ namespace MainGame
 {
     public class PlayerNetwork : NetworkBehaviour
     {
-        [HideInInspector] public string PlayerName;
+        public string playerName;
+
+        public override void OnStartAuthority()
+        {
+            enabled = true;
+        }
+
+        public override void OnStartLocalPlayer()
+        {
+            playerName = NetworkGamePlayer.singleton.GetDisplayName();
+        }
     }
 }
